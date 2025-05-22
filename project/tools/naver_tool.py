@@ -6,7 +6,7 @@ from langchain.tools import Tool              # LangChain Tool 정의
 from langchain_openai import ChatOpenAI  # LLM 호출용
 from dotenv import load_dotenv                # .env 환경변수 로딩
 from pathlib import Path                      # 상대 경로를 사용하기 위함
-
+import time 
 
 base_path = Path(__file__).resolve().parent.parent  # tools/의 상위 → project/
 env_path = base_path / ".env"   
@@ -33,7 +33,9 @@ def naver_shop_search(user_input: str) -> str:
     출력:
     """
     try:
+        start = time.time()
         search_query = llm.invoke(prompt).content.strip()
+        print(f"[NAVER] 🔍 쿼리 생성 소요 시간: {time.time() - start:.2f}초")
     except Exception as e:
         return f"쿼리 정제 중 오류가 발생했습니다: {e}"
 
@@ -51,8 +53,10 @@ def naver_shop_search(user_input: str) -> str:
     }
 
     url = "https://openapi.naver.com/v1/search/shop.json"
+    start = time.time()
     response = requests.get(url, headers=headers, params=params)
-    
+    print(f"[NAVER] 🌐 API 호출 소요 시간: {time.time() - start:.2f}초")
+   
     if response.status_code != 200:
         return "\n상품 검색 중 오류가 발생했습니다.\n"
 

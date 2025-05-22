@@ -14,6 +14,8 @@ chat_model = ChatOpenAI(
     model_name="gpt-4o-mini",
 )
 
+agent = create_agent()
+
 # ▶️ 시스템 프롬프트 설정
 system_message = """
     <시스템 프롬프트>
@@ -25,6 +27,11 @@ system_message = """
 
     그 전까지는 반드시 질문만 하며 정보를 유도하세요.
     친근하고 자연스럽게 구어체로 질문해 주세요.
+    
+    <안전지침>
+    선물과 관련 없는 내용에는 아래와 같이 답변합니다.
+    - '죄송합니다. 관련 정보를 확인할 수 없습니다.'
+    - '죄송합니다. 선물 추천과 관련 없는 질문에는 답변할 수 없습니다.
 """
 chat_prompt = ChatPromptTemplate.from_messages([
     ("system", system_message),
@@ -46,11 +53,12 @@ situation_info_prompt = PromptTemplate(
     현재 상황 정보:
     {current_info}
 
-    다음 항목을 추론하세요: 
-    사용자와 선물 받는 대상과의 친밀도: 질문을 통하지 않고 대화 내용을 통해 추론, 
-    선물하는 감정, 
-    선물 받는 사람의 선호, 
-    예산: 사용자가 명확하게 언급한 범위만 기록, 임의 추정 금지
+    사용자의 응답에서 다음과 같은 정보를 추론하여 추출하세요.
+    [추론해야하는 정보]
+    "closeness" : 친밀도 (가까움, 어색함, 친해지고 싶음, 애매함 등으로 요약)
+    "emotion" : 선물의 동기나 배경이 된 감정 상태 (예: 예의상, 화해, 진심을 전하고 싶음 등).
+    "preferred_style" : 희망하는 선물의 스타일, 선물하는 사람의 스타일
+    "price_range" : 예산 범위 (3만원~4만원, 7만원 이하, 모름)
 
     나머지 내용은 최소 1번 이상 질문해야 합니다.
     사용자 답변에 있는 내용만 current_info에서 수정하여 출력합니다.
@@ -95,7 +103,6 @@ def chat():
 
     # 🎯 대화 이력 초기화
     chat_history = []
-    agent = create_agent()
 
     # 🎯 사용자 메시지 생성
     user_message = f"""

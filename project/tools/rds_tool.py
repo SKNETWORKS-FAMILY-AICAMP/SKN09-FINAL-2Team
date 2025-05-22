@@ -6,7 +6,7 @@ from pydantic import BaseModel        # Tool 입력 타입 정의용
 from langchain.tools import BaseTool  # LangChain 사용자 정의 Tool 기반 클래스
 from pathlib import Path
 from dotenv import load_dotenv
-
+import time
 
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
@@ -45,6 +45,7 @@ class MySQLQueryTool(BaseTool):
         conn = None
         cursor = None
         try:
+            start = time.time()  # 시작
             conn = mysql.connector.connect(
                 host=self.host,
                 user=self.user,
@@ -53,7 +54,10 @@ class MySQLQueryTool(BaseTool):
             )
             cursor = conn.cursor()
             cursor.execute(query)
-            rows = cursor.fetchall()
+            rows = cursor.fetchall()            
+            elapsed = time.time() - start  # 끝
+            print(f"[RDS] 🔍 DB 쿼리 소요 시간: {elapsed:.2f}초")
+
             column_names = [desc[0] for desc in cursor.description]
 
             result = [dict(zip(column_names, row)) for row in rows]
