@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>센픽 - 선물 추천 챗봇</title>
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            background-color: #f8f8f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+        }
+        .chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .messages {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .input-box {
+            display: flex;
+            padding: 20px;
+            background: #fff;
+            border-top: 1px solid #ddd;
+        }
+        .input-box input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .input-box button {
+            margin-left: 10px;
+            padding: 14px 20px;
+            border-radius: 8px;
+            background-color: #ffdc00;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .message {
+            margin-bottom: 20px;
+        }
+        .user {
+            text-align: right;
+            color: #444;
+        }
+        .bot {
+            text-align: left;
+            color: #222;
+            background: #fff5d9;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <h3>💬 최근 대화</h3>
+        <ul>
+            <li>공백포함11글자</li>
+            <li>엄마 생신 선물</li>
+            <li>7만원대 집들이</li>
+            <li>실용적 친구 선물</li>
+        </ul>
+    </div>
+    <div class="chat">
+        <div class="messages" id="messages">
+            <div class="message bot">🎉 말씀해주신 내용 잘 확인했어요 :)<br>이제 센픽이랑 본격적으로 이야기 나눠볼까요?</div>
+        </div>
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="예: 친구 결혼 선물 5만원대 추천해줘">
+            <button onclick="sendMessage()">전송</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function appendMessage(text, sender) {
+        const messagesDiv = document.getElementById("messages");
+        const messageEl = document.createElement("div");
+        messageEl.className = "message " + sender;
+        messageEl.innerHTML = sender === "user" ? text : `<div class="bot">${text}</div>`;
+        messagesDiv.appendChild(messageEl);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const userInput = document.getElementById("userInput");
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        appendMessage(text, "user");
+        userInput.value = "";
+
+        const response = await fetch("/chat/respond/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({ message: text })
+        });
+        const data = await response.json();
+        appendMessage(data.reply, "bot");
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+</body>
+</html>

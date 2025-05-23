@@ -17,6 +17,16 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
+# def main():
+#     print("✅ main() 시작")  # ← 추가
+#     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'senpick.settings')
+#     try:
+#         from django.core.management import execute_from_command_line
+#     except ImportError as exc:
+#         raise ImportError(...) from exc
+#     print("✅ execute_from_command_line 호출")  # ← 추가
+#     execute_from_command_line(sys.argv)
+
 
 if __name__ == '__main__':
     main()

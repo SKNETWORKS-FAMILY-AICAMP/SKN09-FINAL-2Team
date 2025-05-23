@@ -19,5 +19,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('app.urls'))
+    path("chat/", include("chatbot.urls")),  # ✅ 반드시 있어야 함
 ]

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app', # 앱 이름 추가
+    'chatbot', # 앱 이름 추가
 ]
 
 MIDDLEWARE = [
