@@ -6,19 +6,22 @@
   <title>Senpick 챗봇</title>
   <link rel="stylesheet" href="{% static 'css/stepper.css' %}">
   <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+  <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/sidebar2.css' %}">
 </head>
 <body>
   <div class="app-layout">
     {% include 'sidebar.html' %}
     <div class="main-content">
-      <div class="chatbot-header">
-        <h1>안녕하세요! {{ username }}님</h1>
-        <p>오늘은 누구를 위한 선물을 고민하고 계신가요?</p>
-      </div>
       <div class="chatbot-body">
         <div class="chat-window" id="chat-history">
-          <!-- 카드/채팅 로그가 여기 누적됩니다 -->
+        <div class="chatbot-header">
+          <h1>안녕하세요! {{ username }}님</h1>
+          <p>오늘은 누구를 위한 선물을 고민하고 계신가요?</p>
         </div>
+          <!-- 질문/옵션 카드가 번갈아 추가됨 -->
+        </div>
+        <!-- 질문 다 끝나면 등장하는 채팅 입력창 -->
         <form class="chat-input-form" id="chat-form" autocomplete="off" style="display:none;">
           <div class="chat-input-wrap">
             <input type="text" id="user-input" placeholder="예: '친구 결혼 선물 5만원대 추천해줘'" />
@@ -31,13 +34,37 @@
         </form>
       </div>
     </div>
+    {% include 'sidebar2.html' %}
   </div>
   <script>
-    // 질문 데이터 (파일 업로드 단계 포함 예시)
     const stepData = [
       {
-        title: "1/1",
-        question: "대화내역 파일을 첨부해주세요",
+        title: "1/5",
+        question: "누구의 선물을 준비하고 계신가요?",
+        options: ["가족", "친구", "연인·배우자", "직장", "학교·멘토", "지인·이웃", "반려동물", "기타"],
+        type: "checkbox"
+      },
+      {
+        title: "2/5",
+        question: "어떤 감정/분위기에 맞는 선물이 좋으세요?",
+        options: ["감동", "유쾌", "실용", "로맨틱", "감사", "응원"],
+        type: "checkbox"
+      },
+      {
+        title: "3/5",
+        question: "선호하는 스타일이 있으신가요?",
+        options: ["모던", "러블리", "심플", "고급스러움", "트렌디", "기타"],
+        type: "checkbox"
+      },
+      {
+        title: "4/5",
+        question: "예산을 선택해 주세요.",
+        options: ["3만원대", "5만원대", "7만원대", "10만원 이상"],
+        type: "checkbox"
+      },
+      {
+        title: "5/5",
+        question: `<b>카카오톡</b>이나 <b>인스타그램 대화 파일을 첨부</b>해주시면, 그 속 대화를 바탕으로 관계와 상황을 파악해 더 정교하고 진심이 담긴 선물을 추천드려요.`,
         type: "file"
       }
     ];
@@ -46,57 +73,46 @@
 
     function renderStep() {
       const data = stepData[currentStep];
-      // 파일 첨부 카드 예시 (확장 가능)
+
+      // 1. 질문(대사) talk-card (file 타입은 파란 테두리)
+      const talkCardClass = data.type === "file" ? "talk-card talk-card-accent" : "talk-card";
+      const talkHtml = `<div class="${talkCardClass}">
+        <div class="step-title">${data.title}</div>
+        <div class="step-question">${data.question}</div>
+      </div>`;
+      document.getElementById('chat-history').insertAdjacentHTML('beforeend', talkHtml);
+
+      // 2. step-card(옵션/파일) 추가
       if (data.type === "file") {
         let html = `
-          <div class="step-card step-card-file" id="step-card-${currentStep}">
-            <form class="file-upload-form" enctype="multipart/form-data" onsubmit="return false;">
-              <label class="file-dropzone">
-                <input type="file" accept=".txt,.json" style="display:none;">
-                <div class="file-drop-content">
-                  <svg width="34" height="34" style="opacity:.3;margin-bottom:7px;" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.51 12.488l-9.078 9.077a2.61 2.61 0 0 0 3.691 3.693l7.7-7.7a5.22 5.22 0 0 0-7.383-7.384l-7.701 7.701a7.83 7.83 0 0 0 11.078 11.077l9.077-9.078" stroke="#888" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <div>대화내역 파일 첨부하기<br><span class="file-hint">(txt, json 파일, 1개만 첨부 가능)</span></div>
-                </div>
-              </label>
-              <div class="file-drop-error" style="color:#e53a3a; font-size:15px; margin:8px 0 0 0; min-height:22px;"></div>
-              <label class="step-option">
-                <input type="checkbox" id="skip-checkbox" style="margin-right:10px;">
-                건너뛰기
-              </label>
-              <button type="button" class="step-next-btn" id="start-btn">센픽과 대화 시작하기</button>
-            </form>
-          </div>
+        <div class="step-card step-card-file" id="step-card-${currentStep}">
+          <form class="file-upload-form" enctype="multipart/form-data" onsubmit="return false;">
+            <label class="file-dropzone">
+              <input type="file" accept=".txt,.json" style="display:none;">
+              <div class="file-drop-content">
+                <svg width="34" height="34" style="opacity:.3;margin-bottom:7px;" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.51 12.488l-9.078 9.077a2.61 2.61 0 0 0 3.691 3.693l7.7-7.7a5.22 5.22 0 0 0-7.383-7.384l-7.701 7.701a7.83 7.83 0 0 0 11.078 11.077l9.077-9.078" stroke="#888" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div>대화내역 파일 첨부하기<br><span class="file-hint">(txt, json 파일, 1개만 첨부 가능)</span></div>
+              </div>
+            </label>
+            <label class="step-option">
+              <input type="checkbox" id="skip-checkbox" style="margin-right:10px;">
+              건너뛰기
+            </label>
+            <button type="button" class="step-next-btn" id="start-btn">센픽과 대화 시작하기</button>
+          </form>
+        </div>
         `;
         document.getElementById('chat-history').insertAdjacentHTML('beforeend', html);
 
-        // --- 파일 첨부/에러 표시/파일명 표시
+        // 파일 첨부/파일명 표시
         const fileInput = document.querySelector(`#step-card-${currentStep} input[type="file"]`);
         const fileDropContent = document.querySelector(`#step-card-${currentStep} .file-drop-content`);
         const fileDropzone = document.querySelector(`#step-card-${currentStep} .file-dropzone`);
-        const errorBox = document.querySelector(`#step-card-${currentStep} .file-drop-error`);
         const skipCheckbox = document.getElementById('skip-checkbox');
 
-        // 지원 확장자 검사 함수
-        function isValidFile(file) {
-          if (!file) return false;
-          const name = file.name.toLowerCase();
-          return name.endsWith('.txt') || name.endsWith('.json');
-        }
-
         fileDropzone.onclick = function() { fileInput.click(); };
-
         fileInput.onchange = function(e) {
-          fileDropzone.classList.remove('error');
-          errorBox.textContent = '';
           if (this.files.length > 0) {
-            if (!isValidFile(this.files[0])) {
-              // 에러 처리
-              fileDropzone.classList.add('error');
-              errorBox.textContent = '지원하지 않는 파일형식 입니다.';
-              fileInput.value = '';
-              fileDropContent.innerHTML = `대화내역 파일 첨부하기<br><span class="file-hint">(txt, json 파일, 1개만 첨부 가능)</span>`;
-              return;
-            }
             fileDropContent.innerHTML = `<b>${this.files[0].name}</b> 업로드됨`;
             skipCheckbox.checked = false; // 파일 첨부하면 건너뛰기 해제
           } else {
@@ -104,12 +120,11 @@
           }
         };
 
+        // 건너뛰기 체크하면 파일 선택 해제(원하면!)
         skipCheckbox.onchange = function() {
           if (skipCheckbox.checked && fileInput.files.length > 0) {
             fileInput.value = '';
             fileDropContent.innerHTML = `대화내역 파일 첨부하기<br><span class="file-hint">(txt, json 파일, 1개만 첨부 가능)</span>`;
-            fileDropzone.classList.remove('error');
-            errorBox.textContent = '';
           }
         };
 
@@ -117,8 +132,7 @@
         document.getElementById('start-btn').onclick = function() {
           const skipChecked = skipCheckbox.checked;
           if (!skipChecked && fileInput.files.length === 0) {
-            errorBox.textContent = '파일을 첨부하거나, 건너뛰기를 체크해주세요!';
-            fileDropzone.classList.add('error');
+            alert("파일을 첨부하거나, 건너뛰기를 체크해주세요!");
             return;
           }
           let msg = skipChecked
@@ -139,10 +153,58 @@
 
         return;
       }
-      // ... (여기에 추가적인 질문 단계 render 가능)
+
+      // (기존 라디오/체크박스)
+      let html = `<div class="step-card" id="step-card-${currentStep}">
+        <div class="step-options">`;
+      data.options.forEach((opt, i) => {
+        html += `
+          <label class="step-option">
+            <input type="${data.type}" name="step-option-${currentStep}" value="${opt}">
+            ${opt}
+          </label>`;
+      });
+      html += `</div>
+        <button class="step-next-btn" type="button" onclick="nextStep(${currentStep})">다음</button>
+      </div>`;
+      document.getElementById('chat-history').insertAdjacentHTML('beforeend', html);
+
+      // 선택 스타일
+      const stepCard = document.getElementById(`step-card-${currentStep}`);
+      stepCard.querySelectorAll('.step-option input').forEach(input => {
+        input.addEventListener('change', function() {
+          if (input.type === 'checkbox') {
+            input.parentElement.classList.toggle('selected', input.checked);
+          } else {
+            stepCard.querySelectorAll('.step-option').forEach(label => label.classList.remove('selected'));
+            if(this.checked) this.parentElement.classList.add('selected');
+          }
+        });
+      });
+
+      setTimeout(() => {
+        document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+      }, 50);
     }
 
-    // 채팅 입력
+    function nextStep(stepIdx) {
+      const stepCard = document.getElementById(`step-card-${stepIdx}`);
+      const inputs = stepCard.querySelectorAll(`input[name="step-option-${stepIdx}"]:checked`);
+      if(inputs.length === 0) { alert('선택해주세요!'); return; }
+      const selected = Array.from(inputs).map(i => i.value).join(', ');
+      stepCard.insertAdjacentHTML('afterend', `<div class="chat-msg user">${selected}</div>`);
+      answers[stepIdx] = Array.from(inputs).map(i => i.value);
+      currentStep++;
+      if(currentStep < stepData.length) {
+        renderStep();
+      } else {
+        document.getElementById('chat-form').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('chat-form').scrollIntoView({behavior:'smooth'});
+        }, 200);
+      }
+    }
+
     function chatInit() {
       const chatForm = document.getElementById('chat-form');
       const chatHistory = document.getElementById('chat-history');
