@@ -2,25 +2,44 @@ document.addEventListener("DOMContentLoaded", function () {
   const logoBtn = document.querySelector(".logo");
   const emailInput = document.getElementById("email");
   const emailError = document.getElementById("email-error");
-  const loginForm = document.querySelector(".login-form");
-  console.log("loginform loaded:", loginForm);
+  const pswdForm = document.querySelector(".pswd-form");
+  console.log("pswdForm loaded:", pswdForm);
 
   logoBtn.addEventListener("click", () => window.location.href = "/login");
 
   emailInput.addEventListener("focus", function () {
-    if (emailInput.value === "") {
-      emailInput.classList.add("error");
-      emailError.classList.add("show");
-      emailError.textContent = "이메일을 필수 입력해주세요.";
-    }
-  });
+        // focus 시에는 초기화만 수행하고, 입력 여부 검사는 input 또는 blur에서 처리
+        emailInput.classList.remove("error");
+        emailError.classList.remove("show");
+    });
+
+  emailInput.addEventListener("input", function () {
+        if (emailInput.classList.contains("error")) {
+            emailInput.classList.remove("error");
+        }
+        if (emailError.classList.contains("show")) {
+            emailError.classList.remove("show");
+        }
+    });
 
   emailInput.addEventListener("blur", function () {
-    if (emailInput.value !== "") {
-      emailInput.classList.remove("error");
-      emailError.classList.remove("show");
-    }
-  });
+        const email = emailInput.value.trim();
+        if (email === "") {
+            emailInput.classList.add("error");
+            emailError.textContent = "이메일을 필수 입력해주세요.";
+            emailError.classList.add("show");
+        } else {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 기본적인 이메일 정규 표현식
+            if (!emailPattern.test(email)) {
+                emailInput.classList.add("error");
+                emailError.textContent = "유효한 이메일 형식이 아닙니다."; // 커스텀 에러 메시지
+                emailError.classList.add("show");
+            } else {
+                emailInput.classList.remove("error");
+                emailError.classList.remove("show");
+            }
+        }
+    });
 
   loginForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -33,6 +52,14 @@ document.addEventListener("DOMContentLoaded", function () {
       emailError.classList.add("show");
       return;
     }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            emailInput.classList.add("error");
+            emailError.textContent = "유효한 이메일 형식이 아닙니다."; // 커스텀 에러 메시지
+            emailError.classList.add("show");
+            return; // 유효하지 않으면 폼 제출을 막고 종료
+        }
 
     fetch("/api/pswd_request/", {
       method: "POST",

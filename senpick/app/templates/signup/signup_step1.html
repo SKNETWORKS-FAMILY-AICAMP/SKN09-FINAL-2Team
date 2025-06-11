@@ -9,112 +9,105 @@
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
   <!-- 슬라이드 전용 스타일 -->
   <link rel="stylesheet" href="{% static 'css/slide.css' %}">
-  {% comment %} <link rel="stylesheet" href="{% static 'css/stepper.css' %}"> {% endcomment %}
-  <script src="{% static 'js/slide.js' %}" defer></script>
-  <script src="{% static 'js/signup.js' %}" defer></script>
 </head>
 <body>
-  <div class="background">
-    <div class="signup-container">
-      <form method="POST" action="{% url 'signup_step1' %}" class="signup-form-area step1">
-        <!-- CSRF 토큰 -->
-      {% csrf_token %}
-        <!-- 1) 로고 -->
-        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo" onclick="location.href=`{% url 'login' %}`">
-        <!-- 2) 스텝 인디케이터 -->
-        <div class="step-indicator">
-          <span class="dot active"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
-        <div class="signup-form-wrapper">
-          <div class="signup-form">
-            <!-- 3) 회원가입 타이틀 -->
-            <h2 class="signup-title">회원가입</h2>
+  <div class="background signup-background">
+    <div class="signup-card">
+      <div class="logo-wrapper">
+        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
+      </div>
+      <div class="step-indicator">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="signup-form-header">
+        <h2 class="signup-title">회원가입</h2>
+      </div>
+      <div class="outer-wrapper scrollable-content">
+        <div class="login-wrapper">
+          <div class="form-block">
+            <form method="POST" action="{% url 'signup_step1' %}" class="signup-form-area step1">
+              {% csrf_token %}
+              <label for="email" class="label-email">이메일</label>
+              <input type="email" id="email" name="email" class="input-email"
+                    placeholder="이메일 입력 (예: senpick@senpick.com)">
+              <div id="email-error" class="error-message">{{ errors.email }}</div>
 
-            <!-- 4) 이메일 -->
-            <label for="email" class="label-email">이메일</label>
-            <input type="email" id="email" name="email" class="input-email"
-                  placeholder="이메일 입력 (예: senpick@senpick.com)">
-            <!-- 이메일 에러 메시지 -->
-            <div id="email-error" class="error-message">{{ errors.email }}</div>
+              <label for="password" class="label-password">비밀번호</label>
+              <input type="password" id="password" name="password" class="input-password"
+                    placeholder="비밀번호 입력">
+              <div id="password-error" class="error-message">{{ errors.password }}</div>
 
-            <!-- 5) 비밀번호 -->
-            <label for="password" class="label-password">비밀번호</label>
-            <input type="password" id="password" name="password" class="input-password"
-                  placeholder="비밀번호 입력">
-            <div id="password-error" class="error-message">{{ errors.password }}</div>
+              <label for="nickname" class="label-nickname">닉네임</label>
+              <input type="text" id="nickname" name="nickname" class="input-nickname"
+                    placeholder="한글만 최대 8자">
+              <div id="nickname-error" class="error-message">{{ errors.nickname }}</div>
 
-            <!-- 6) 닉네임 -->
-            <label for="nickname" class="label-nickname">닉네임</label>
-            <input type="text" id="nickname" name="nickname" class="input-nickname"
-                  placeholder="한글만 최대 8자">
-            <div id="nickname-error" class="error-message">{{ errors.nickname }}</div>
+              <label class="label-terms">약관동의</label>
+              <div class="terms-box step-option">
+                <label class="checkbox checkbox-all">
+                  <input type="checkbox" id="allAgree">
+                  전체 약관 동의
+                </label>
+                <hr>
+                <label class="checkbox step-option">
+                  <input type="checkbox" name="agree" id="term1">
+                  <span class="checkbox-label">
+                    <a href="#" data-modal="serviceModal">서비스 이용약관</a>에 동의합니다.
+                  </span>
+                  <span class="required">(필수)</span>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" name="agree" id="term2">
+                  <span class="checkbox-label">
+                    <a href="#" data-modal="personalModal">개인정보 수집·이용 약관</a>에 동의합니다.
+                  </span>
+                  <span class="required">(필수)</span>
+                </label>
+              </div>
+              <!-- 이메일 송신 오류 메시지 -->
+              <div id="email-send-error" class="error-message">{{ errors.email_send }}</div>
+              <!-- 약관 오류 메시지 -->
+              <div id="terms-error" class="error-message"></div>
+              <!-- 9) 다음 단계 버튼 -->
+              <button type="submit" id="nextBtn" class="next-btn active">다음 단계</button>
 
-            <!-- 7) 약관동의 텍스트 -->
-            <label class="label-terms">약관동의</label>
-
-            <!-- 8) 전체 약관 동의 박스 -->
-            <div class="terms-box step-option">
-              <label class="checkbox checkbox-all">
-                <input type="checkbox" id="allAgree">
-                전체 약관 동의
-              </label>
-              <hr>
-              <label class="checkbox step-option">
-                <input type="checkbox" name="agree" id="term1">
-                <span class="checkbox-label">
-                  <a href="#" data-modal="serviceModal">서비스 이용약관</a>에 동의합니다.
-                </span>
-                <span class="required">(필수)</span>
-              </label>
-              <label class="checkbox">
-                <input type="checkbox" name="agree" id="term2">
-                <span class="checkbox-label">
-                  <a href="#" data-modal="personalModal">개인정보 수집·이용 약관</a>에 동의합니다.
-                </span>
-                <span class="required">(필수)</span>
-              </label>
-            </div>
-            <!-- 이메일 송신 오류 메시지 -->
-            <div id="email-send-error" class="error-message">{{ errors.email_send }}</div>
-            <!-- 약관 오류 메시지 -->
-            <div id="terms-error" class="error-message"></div>
-            <!-- 9) 다음 단계 버튼 -->
-            <button type="submit" id="nextBtn" class="next-btn active">다음 단계</button>
-
-            <!-- 서비스 이용약관 모달 -->
-            <div id="serviceModal" class="modal-overlay">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <span class="modal-title">서비스 이용약관</span>
-                  <button class="modal-close"><img src="{% static 'images/close_black.svg' %}" alt="✖"></button>
-                </div>
-                <div class="modal-body">
-                  {{ service_content|safe }}
+              <!-- 서비스 이용약관 모달 -->
+              <div id="serviceModal" class="modal-overlay">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <span class="modal-title">서비스 이용약관</span>
+                    <button class="modal-close" type="button"><img src="{% static 'images/close_black.svg' %}" alt="✖"></button>
+                  </div>
+                  <div class="modal-body">
+                    {{ service_content|safe }}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- 개인정보 수집·이용 약관 모달 -->
-            <div id="personalModal" class="modal-overlay">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <span class="modal-title">개인정보 수집·이용 약관</span>
-                  <button class="modal-close"><img src="{% static 'images/close_black.svg' %}" alt="✖"></button>
-                </div>
-                <div class="modal-body">
-                  {{ personal_content|safe }}
+              <!-- 개인정보 수집·이용 약관 모달 -->
+              <div id="personalModal" class="modal-overlay">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <span class="modal-title">개인정보 수집·이용 약관</span>
+                    <button class="modal-close" type="button"><img src="{% static 'images/close_black.svg' %}" alt="✖"></button>
+                  </div>
+                  <div class="modal-body">
+                    {{ personal_content|safe }}
+                  </div>
                 </div>
               </div>
-            </div>
+            </form><!-- /.signup-form-area -->
           </div>
         </div>
-      </form><!-- /.signup-form-area -->
+      </div>
     </div><!-- /.signup-container -->
     <!-- 오른쪽 슬라이드 포함 -->
     {% include "slide.html" %}
   </div>
+  <script src="{% static 'js/slide.js' %}" defer></script>
+  <script src="{% static 'js/signup.js' %}" defer></script>
 </body>
 </html>

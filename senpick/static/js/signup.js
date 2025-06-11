@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("📣 signup.js가 로드되었습니다. 현재 path =", window.location.pathname);
+  const logoBtn = document.querySelector(".logo");
+  logoBtn.addEventListener("click", () => window.location.href = "/login");
 
   const path = window.location.pathname;
 
@@ -27,15 +28,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 모달 닫기
     document.querySelectorAll(".modal-close").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", e => {
+        e.preventDefault(); 
         btn.closest(".modal-overlay").classList.remove("open");
       });
     });
     document.querySelectorAll(".modal-overlay").forEach(overlay => {
       overlay.addEventListener("click", e => {
-        if (e.target === overlay) overlay.classList.remove("open");
+        if (e.target === overlay) {
+          e.preventDefault(); 
+          overlay.classList.remove("open");
+        }
       });
     });
+    // document.querySelectorAll(".modal-close").forEach(btn => {
+    //   btn.addEventListener("click", () => {
+    //     btn.closest(".modal-overlay").classList.remove("open");
+    //   });
+    // });
+    // document.querySelectorAll(".modal-overlay").forEach(overlay => {
+    //   overlay.addEventListener("click", e => {
+    //     if (e.target === overlay) overlay.classList.remove("open");
+    //   });
+    // });
 
     // 전체 동의 제어
     allAgree.addEventListener("change", () => {
@@ -65,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       resetErrors();
       let hasError = false;
+      let firstErrorElement = null; 
 
       // 이메일 검증
       const emailValue = email.value.trim();
@@ -73,11 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
       emailErr.style.visibility = "visible";
       email.classList.add("error");
       hasError = true;
+      if (!firstErrorElement) firstErrorElement = email;
     } else if (!emailPattern.test(emailValue)) {
       emailErr.textContent = "올바른 이메일 형식으로 입력해주세요.";
       emailErr.style.visibility = "visible";
       email.classList.add("error");
       hasError = true;
+      if (!firstErrorElement) firstErrorElement = email;
     } else {
       try {
         const res = await fetch(`/signup/check-dup/?field=email&value=${encodeURIComponent(emailValue)}`);
@@ -87,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
           emailErr.style.visibility = "visible";
           email.classList.add("error");
           hasError = true;
+          if (!firstErrorElement) firstErrorElement = email;
         }
       } catch (err) {
         console.error("이메일 중복검사 오류:", err);
@@ -100,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pwErr.style.visibility = "visible";
         password.classList.add("error");
         hasError = true;
+        if (!firstErrorElement) firstErrorElement = password;
       }
 
       // 닉네임 검증 (통합 메시지)
@@ -109,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nickErr.style.visibility = "visible";
         nickname.classList.add("error");
         hasError = true;
+        if (!firstErrorElement) firstErrorElement = nickname; 
       } else {
       try {
         const res = await fetch(`/signup/check-dup/?field=nickname&value=${encodeURIComponent(nickValue)}`);
@@ -118,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
           nickErr.style.display = "block";
           nickname.classList.add("error");
           hasError = true;
+          if (!firstErrorElement) firstErrorElement = nickname;
         }
       } catch (err) {
         console.error("닉네임 중복검사 오류:", err);
@@ -129,13 +151,29 @@ document.addEventListener('DOMContentLoaded', () => {
         termsErr.textContent = "필수 약관에 동의해주세요.";
         termsErr.style.visibility = "visible";
         hasError = true;
+        if (!firstErrorElement) firstErrorElement = termsErr; 
       }
 
-      if (!hasError) {
-        console.log("모든 검증 통과 — 다음 단계로 이동");
-        window.location.href = "/signup/step2/";
-        document.querySelector("form.signup-form-area").submit();
+      if (hasError) {
+          if (firstErrorElement) {
+              const scrollableContainer = document.querySelector('.outer-wrapper.scrollable-content');
+              if (scrollableContainer) {
+                  // firstErrorElement를 scrollableContainer 내부에서 보이도록 스크롤합니다.
+                  // 'center'는 요소가 스크롤 영역의 중앙에 오도록 시도합니다.
+                  firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+          }
+          return; // 에러가 있으므로 함수 실행을 중단합니다.
       }
+
+      // if (!hasError) {
+      //   console.log("모든 검증 통과 — 다음 단계로 이동");
+      //   document.querySelector("form.signup-form-area.step1").submit(); 
+      //   // window.location.href = "/signup/step2/";
+      //   // document.querySelector("form.signup-form-area").submit();
+      // }
+      console.log("모든 검증 통과 — 다음 단계로 이동");
+      document.querySelector("form.signup-form-area.step1").submit();
     });
   }
 
@@ -151,7 +189,7 @@ else if (path.includes("signup/step2")) {
     // 2) 타이머 초기화 및 카운트다운 시작 (5분 = 300초)
     let timeLeft = 300;  // 300초 (5*60)
     timerEl.textContent = formatTime(timeLeft);  // 초기값 "05:00"
-    const countdown = setInterval(() => {
+    let countdown = setInterval(() => { 
       timeLeft--;
       if (timeLeft < 0) {
         // 1) 타이머 멈추기
@@ -243,7 +281,7 @@ else if (path.includes("signup/step2")) {
       clearInterval(countdown);
       timeLeft = 300;
       timerEl.textContent = formatTime(timeLeft);
-      const newCountdown = setInterval(() => {
+      countdown = setInterval(() => {
         timeLeft--;
         if (timeLeft < 0) {
           clearInterval(newCountdown);
@@ -306,6 +344,7 @@ else if (path.includes("signup/step2")) {
     const jobSelect     = document.getElementById("job");
     const jobErrEl      = document.getElementById("job-error");
     const nextBtn       = document.getElementById("nextBtn");
+    const genderInput   = document.getElementById("genderInput");
 
     let selectedGender = "";  // "male" 또는 "female"
 
@@ -337,6 +376,7 @@ else if (path.includes("signup/step2")) {
       e.preventDefault();
 
       let hasError = false;
+      let firstErrorElement = null; 
 
       // 3-1) 생년월일 검증: 8자리 숫자(YYYYMMDD)
       const birthValue = birthEl.value.trim();
@@ -347,6 +387,7 @@ else if (path.includes("signup/step2")) {
         birthErrEl.style.visibility = "visible";
         birthEl.classList.add("error");
         hasError = true;
+        if (!firstErrorElement) firstErrorElement = birthEl;
       } else {
         birthErrEl.textContent = ""; // 에러 메시지 초기화
         birthErrEl.style.visibility = "hidden";
@@ -358,21 +399,33 @@ else if (path.includes("signup/step2")) {
         genderErrEl.textContent = "성별을 선택해주세요.";
         genderErrEl.style.visibility = "visible";
         hasError = true;
+        if (!firstErrorElement) firstErrorElement = maleBtn; 
       } else {
         genderErrEl.textContent = ""; // 에러 메시지 초기화
         genderErrEl.style.visibility = "hidden";
       }
 
       // 3-3) 직업 검증: 값이 빈 문자열이 아닌지
-      const jobValue = jobSelect.value;
-      if (jobValue === "직업 선택") {
+      const jobValue = jobInput.value.trim(); // jobSelect 대신 jobInput 사용
+      if (jobValue === "" || jobValue === jobInput.placeholder) { // 플레이스홀더 텍스트도 비어있는 것으로 간주
         jobErrEl.textContent = "직업을 선택해주세요.";
         jobErrEl.style.visibility = "visible";
-        jobSelect.classList.add("error");
+        jobInput.classList.add("error"); // jobSelect 대신 jobInput 사용
         hasError = true;
+        if (!firstErrorElement) firstErrorElement = jobInput; // jobSelect 대신 jobInput 사용
       } else {
         jobErrEl.style.visibility = "hidden";
-        jobSelect.classList.remove("error");
+        jobInput.classList.remove("error"); // jobSelect 대신 jobInput 사용
+      }
+
+      if (hasError) {
+        if (firstErrorElement) {
+          const scrollableContainer = document.querySelector('.outer-wrapper.scrollable-step3-content'); // Step3도 이 클래스를 사용한다고 가정
+          if (scrollableContainer) {
+            firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+        return; // 에러가 있으므로 함수 실행을 중단합니다.
       }
 
       // 3-4) 모든 검증 통과 시 다음 단계로 이동
@@ -451,12 +504,14 @@ else if (path.includes("signup/step4")) {
   completeBtn.addEventListener('click', e => {
     e.preventDefault();
     let hasError = false;
+    let firstErrorElement = null;
 
     // 4-1) 스타일 검증: 최소 1개 선택 여부
     if (selectedStyles.length === 0) {
       styleErrorEl.textContent = "최소 1개 이상의 선호 스타일을 선택해주세요.";
       styleErrorEl.style.visibility = "visible";
       hasError = true;
+      if (!firstErrorElement) firstErrorElement = styleErrorEl; 
     } else {
       styleErrorEl.textContent = ""; // 에러 메시지 초기화
       styleErrorEl.style.visibility = "hidden";
@@ -467,16 +522,26 @@ else if (path.includes("signup/step4")) {
       categoryErrorEl.textContent = "최소 1개 이상의 선호 카테고리를 선택해주세요.";
       categoryErrorEl.style.visibility = "visible";
       hasError = true;
+      if (!firstErrorElement) firstErrorElement = categoryErrorEl;
     } else {
       categoryErrorEl.textContent = ""; // 에러 메시지 초기화
       categoryErrorEl.style.visibility = "hidden";
     }
 
-    if (hasError) return;
-      const allIds = [...selectedStyles, ...selectedCategories];
-      prefInput.value = allIds.join(",");
+    if (hasError) {
+      if (firstErrorElement) {
+        const scrollableContainer = document.querySelector('.outer-wrapper.scrollable-content'); // Step4도 이 클래스를 사용한다고 가정
+        if (scrollableContainer) {
+          firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      return; // 에러가 있으므로 함수 실행을 중단합니다.
+    }
 
-      document.querySelector("form.signup-form-area.step4").submit();
+    const allIds = [...selectedStyles, ...selectedCategories];
+    prefInput.value = allIds.join(",");
+
+    document.querySelector("form.signup-form-area.step4").submit();
   });
 }
 

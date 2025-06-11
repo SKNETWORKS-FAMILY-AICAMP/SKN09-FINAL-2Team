@@ -5,55 +5,56 @@
   <meta charset="UTF-8">
   <title>회원정보 입력</title>
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
-  <link rel="stylesheet" href="{% static 'css/profile_info.css' %}">
+  {% comment %} <link rel="stylesheet" href="{% static 'css/profile_info.css' %}"> {% endcomment %}
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
   <link rel="stylesheet" href="{% static 'css/slide.css' %}">
-  <script src="{% static 'js/slide.js' %}" defer></script>
 </head>
 <body>
-  <div class="background">
-    <div class="signup-container">
-      <!-- 왼쪽 폼 영역 -->
-      <div class="signup-form-area">
-        <!-- 로고 -->
-        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo" onclick="location.href=`{% url 'login' %}`">
-        <!-- 스텝 인디케이터 -->
-        <div class="step-indicator">
-          <span class="dot active"></span>
-          <span class="dot active"></span>
-          <span class="dot active"></span>
-          <span class="dot"></span>
-        </div>
-        <div class="signup-form-wrapper">
-          <form method="post" class="signup-form profile-form signup-form-area step3">
-            {% csrf_token %}
-            <!-- 타이틀 -->
-            <h2 class="signup-title">당신을 알아갈수록,<br>더 센스있는 선물을 고를 수 있어요.</h2>
+  <div class="background signup-background">
+    <div class="signup-card">
+      <div class="logo-wrapper">
+        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
+      </div>
+      <div class="step-indicator">
+        <span class="dot active"></span>
+        <span class="dot active"></span>
+        <span class="dot active"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="signup-form-header">
+        <h2 class="signup-title">당신을 알아갈수록,<br>더 센스있는 선물을 고를 수 있어요.</h2>
+      </div>
 
-            <!-- 생년월일 입력 -->
-            <label for="birth" class="label-birth">생년월일</label>
-            <input type="text" id="birth" name="birth" class="input-birth" placeholder="예: 19990101">
-            <div id="birth-error" class="error-message"></div>
+      <div class="outer-wrapper scrollable-step3-content">
+        <div class="login-wrapper">
+          <div class="form-block">
+            <form method="post" class="signup-form profile-form signup-form-area step3">
+              {% csrf_token %}
+              <!-- 생년월일 입력 -->
+              <label for="birth" class="label-birth">생년월일</label>
+              <input type="text" id="birth" name="birth" class="input-birth" placeholder="예: 19990101">
+              <div id="birth-error" class="error-message"></div>
 
-            <!-- 성별 -->
-            <label class="label-gender">성별</label>
-            <div class="gender-group">
-              <button type="button" class="gender-btn" id="maleBtn">남자</button>
-              <button type="button" class="gender-btn" id="femaleBtn">여자</button>
-            </div>
-            <div id="gender-error" class="error-message"></div>
-            <input type="hidden" name="gender" id="genderInput" value="{{ gender|default:'' }}">
+              <!-- 성별 -->
+              <label class="label-gender">성별</label>
+              <div class="gender-group">
+                <button type="button" class="gender-btn" id="maleBtn">남자</button>
+                <button type="button" class="gender-btn" id="femaleBtn">여자</button>
+              </div>
+              <div id="gender-error" class="error-message"></div>
+              <input type="hidden" name="gender" id="genderInput" value="{{ gender|default:'' }}">
 
-            <!-- 직업 -->
-            <label for="job">직업</label>
-            <div class="job-input">
-              <input id="job" name="job" type="text" value="직업 선택" spellcheck="false">
-              <img src="{% static 'images/bottom_arrow.svg' %}" alt="드롭다운 화살표">
-            </div>
-            <div id="job-error" class="error-message"></div>
-            <!-- 다음단계 버튼 -->
-            <button type="submit" id="nextBtn" class="next-btn">다음 단계</button>
-          </form>
+              <!-- 직업 -->
+              <label class="label-job" for="job">직업</label>
+              <div class="job-input">
+                <input id="job" type="text" name="job" spellcheck="false" placeholder="직업 선택" readonly>
+                <img src="{% static 'images/bottom_arrow.svg' %}" alt="드롭다운 화살표">
+              </div>
+              <div id="job-error" class="error-message"></div>
+              <!-- 다음단계 버튼 -->
+              <button type="submit" id="nextBtn" class="next-btn">다음 단계</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -61,13 +62,14 @@
     {% include "slide.html" %}
   </div>
   <script src="{% static 'js/signup.js' %}" defer></script>
+  <script src="{% static 'js/slide.js' %}" defer></script>
   <script>
     // ------------------------ 드롭다운 직업 선택 ------------------------
     const jobInput = document.querySelector(".job-input input");
     const jobDropdown = document.createElement("ul");
     jobDropdown.className = "job-dropdown";
     const jobList = [
-      "직업 선택","학생/취준생", "직장인", "전문직", "창작/문화 종사자", "공공/공무 종사자",
+      "학생/취준생", "직장인", "전문직", "창작/문화 종사자", "공공/공무 종사자",
       "자영업자", "주부", "비직업군", "기타"
     ];
     const jobError = document.getElementById("job-error");
@@ -87,6 +89,13 @@
     });
 
     document.querySelector(".job-input").appendChild(jobDropdown);
+
+    if (!jobInput.value) { // 만약 user.job 값이 없다면
+        jobInput.value = ""; // 입력 필드 값을 비움
+        jobInput.placeholder = "직업 선택"; // 플레이스홀더 표시
+    } else {
+        jobInput.placeholder = ""; // 값이 있으면 플레이스홀더 숨김
+    }
 
     jobInput.parentNode.addEventListener("click", (e) => {
       e.stopPropagation(); // Prevent click from closing the dropdown

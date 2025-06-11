@@ -11,48 +11,29 @@
   <link rel="stylesheet" href="{% static 'css/pswd.css' %}">
   <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css">
   <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
-  <script src="{% static 'js/slide.js' %}" defer></script>
-  <script src="{% static 'js/pswd.js' %}" defer></script>
 </head>
 <body>
   <div class="background">
     <!-- 왼쪽 카드 (배경 역할만) -->
     <div class="left-card">
-      <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
-<!--       <div class="static-indicator-group">
-        <div class="static-dot static-dot-1 active"></div>
-        <div class="static-line static-line-1"></div>
-        <div class="static-dot static-dot-2"></div>
-        <div class="static-line static-line-2"></div>
-        <div class="static-dot static-dot-3"></div>
+      <div class="logo-wrapper">
+        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
       </div>
-      <div class="text-block">
-        <h2 class="main-title">비밀번호 찾기</h2>
-        <p class="sub-title">가입 시 사용했던 이메일을 기입해주세요.</p>
-      </div>
-
-      <div class="form-block">
-        <form method="post" class="login-form">
-          {% csrf_token %}
-          <input type="email" name="username" id="email" placeholder="이메일 입력 (예:senpick@senpick.com)" required>
-          <div class="error-message" id="email-error">이메일을 필수 입력해주세요.</div>
-          <button type="submit" class="pswd-next">다음 단계</button>
-        </form> -->
       <div class="step-indicator">
         <span class="dot active"></span>
         <span class="dot"></span>
         <span class="dot"></span>
       </div>
-      <div class="outer-wrapper">
-        <div class="login-wrapper">
+      <div class="outer-pswd-wrapper">
+        <div class="pswd-wrapper">
           <div class="text-block">
             <h2 class="main-title">비밀번호 찾기</h2>
             <p class="sub-title">가입 시 사용했던 이메일을 기입해주세요.</p>
           </div>
           <div class="form-block">
-            <form method="post" action="{% url 'login' %}" class="login-form">
+            <form method="post" action="{% url 'login' %}" class="pswd-form">
               {% csrf_token %}
-              <input type="email" name="username" id="email" placeholder="이메일 입력 (예:senpick@senpick.com)" required>
+              <input type="text" name="username" id="email" placeholder="이메일 입력 (예:senpick@senpick.com)">
               <div class="error-message" id="email-error">이메일을 필수 입력해주세요.</div>
               <button type="submit" class="pswd-next">다음 단계</button>
             </form>
@@ -63,5 +44,7 @@
     <!-- 슬라이드 포함 -->
     {% include "slide.html" %}
   </div>
+  <script src="{% static 'js/slide.js' %}" defer></script>
+  <script src="{% static 'js/pswd.js' %}" defer></script>
 </body>
 </html>

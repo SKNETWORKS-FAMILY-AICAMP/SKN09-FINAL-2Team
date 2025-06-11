@@ -19,14 +19,16 @@
     <div class="background">
       <!-- 왼쪽 카드 (배경 역할만) -->
       <div class="left-card">
-        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
+        <div class="logo-wrapper">
+          <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
+        </div>
         <div class="step-indicator">
           <span class="dot active"></span>
           <span class="dot active"></span>
           <span class="dot active"></span>
         </div>
-        <div class="outer-wrapper">
-          <div class="login-wrapper">
+        <div class="outer-pswd-wrapper">
+          <div class="pswd-wrapper">
             <div class="text-block">
               <h2 class="main-title">새 비밀번호 설정</h2>
               <p class="sub-title">새롭게 사용할 비밀번호를 설정해주세요.</p>
@@ -35,12 +37,17 @@
               <form method="post" action="{% url 'pswd_gen' %}" class="password-reset-form">
                 {% csrf_token %}
 
-                <p class="text">새 비밀번호 설정</p>
-                <input type="password" name="new_password" id="new-password" placeholder="비밀번호 입력" required>
-                <div class="password-message" id="new-password-message"></div>
-                <p class="text">새 비밀번호 확인</p>
-                <input type="password" name="confirm_password" id="confirm-password" placeholder="비밀번호 입력" required>
-                <div class="password-message" id="confirm-password-message"></div>
+                <div class="password-input-group"> {# 첫 번째 그룹 시작 #}
+                    <p class="text">새 비밀번호 설정</p>
+                    <input type="password" name="new_password" id="new-password" placeholder="비밀번호 입력" required>
+                    <div class="password-message" id="new-password-message"></div>
+                </div> {# 첫 번째 그룹 끝 #}
+              
+                <div class="password-input-group"> {# 두 번째 그룹 시작 #}
+                    <p class="text">새 비밀번호 확인</p>
+                    <input type="password" name="confirm_password" id="confirm-password" placeholder="비밀번호 입력" required>
+                    <div class="password-message" id="confirm-password-message"></div>
+                </div> {# 두 번째 그룹 끝 #}
                 <button type="submit" class="pswd-next">비밀번호 설정 완료</button>
               </form>
             </div>

@@ -13,21 +13,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Cafe24+Supermagic&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css">
   <link href='//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css' rel='stylesheet' type='text/css'>
-  <script src="{% static 'js/slide.js' %}" defer></script>
-  <script src="{% static 'js/login.js' %}" defer></script>
 </head>
 <body>
   <div class="background">
-    <!-- 왼쪽 카드 -->
     <div class="left-card">
-      <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
-      <div class="outer-wrapper" style="align-items: center;">
+      <div class="logo-wrapper">
+        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
+      </div>
+      <div class="outer-wrapper">
         <div class="login-wrapper">
           <div>
             <h2 class="main-title">어떤 선물을 해야할 지 고민이신가요?</h2>
             <p class="sub-title">센스의 정답 센픽, 모든 순간엔 센픽하세요.</p>
           </div>
-          <form method="post" action="{% url 'login' %}" class="login-form">
+          <form method="post" action="{% url 'login' %}" class="login-form" novalidate>
             {% csrf_token %}
             <div class="input-group"  id="email-group">
               <input type="email" name="username" id="email" placeholder="이메일 입력" required>
@@ -62,16 +61,17 @@
           </form>
           
           <div class="social-login">
-            <img src="{% static 'images/kakao_login.svg' %}" alt="카카오 로그인">
-            <img src="{% static 'images/google_login.svg' %}" alt="구글 로그인">
-            <form method="post" action="/accounts/naver/login/">
+            {% comment %} <form method="post" action="/accounts/naver/login/">
               {% csrf_token %}
               <button type="submit" style="border: none; background: none; padding: 0;">
                 <img src="{% static 'images/naver_login.svg' %}" alt="네이버 로그인">
               </button>
-            </form>
+            </form> {% endcomment %}
+            <img src="{% static 'images/kakao_login.svg' %}" alt="카카오 로그인" id="kakaoLoginBtn"> 
+            <img src="{% static 'images/google_login.svg' %}" alt="구글 로그인" id="googleLoginBtn">
+            <img src="{% static 'images/naver_login.svg' %}" alt="네이버 로그인" id="naverLoginBtn">
           </div>
-      
+
           <div class="link-row">
             <a href="{% url 'pswd' %}" class="find-password">비밀번호 찾기</a>
             <a href="{% url 'signup_step1' %}" class="signup">회원가입</a>
@@ -82,5 +82,33 @@
     <!-- 슬라이드 포함 -->
     {% include "slide.html" %}
   </div>
+  <div id="comingSoonPopup" class="coming-soon-popup">
+    준비중입니다 :)
+  </div>
+  <script src="{% static 'js/slide.js' %}" defer></script>
+  <script src="{% static 'js/login.js' %}" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const kakaoBtn = document.getElementById('kakaoLoginBtn');
+      const googleBtn = document.getElementById('googleLoginBtn');
+      const naverBtn = document.getElementById('naverLoginBtn');
+      const popup = document.getElementById('comingSoonPopup');
+      function showComingSoonPopup() {
+        popup.classList.add('show');
+        setTimeout(() => {
+          popup.classList.remove('show');
+        }, 2000); // 2초 후에 팝업이 사라지도록 설정
+      }
+      if (kakaoBtn) {
+        kakaoBtn.addEventListener('click', showComingSoonPopup);
+      }
+      if (googleBtn) {
+        googleBtn.addEventListener('click', showComingSoonPopup);
+      }
+      if (naverBtn) {
+        naverBtn.addEventListener('click', showComingSoonPopup);
+      }
+    });
+  </script>
 </body>
 </html>

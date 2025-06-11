@@ -5,37 +5,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>이메일 인증 | Senpick</title>
-
-  <!-- signup.css, slide.css 순서대로 불러옵니다 -->
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
   <link rel="stylesheet" href="{% static 'css/signup.css' %}">
   <link rel="stylesheet" href="{% static 'css/slide.css' %}">
-  <script src="{% static 'js/slide.js' %}" defer></script>
 </head>
 <body>
-  <div class="background">
-    <div class="signup-container">
-      <!-- 왼쪽 폼 영역 -->
+  <div class="background signup-background">
+    <div class="signup-card">
+      <div class="logo-wrapper">
+        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo">
+      </div>
+      <div class="step-indicator">
+        <span class="dot active"></span>
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div class="signup-form-header">
+        <h2 class="signup-title">이메일 인증</h2>
+      </div>
       <div class="signup-form-area">
-        <!-- 1) 로고 -->
-        <img src="{% static 'images/senpick_logo.svg' %}" alt="Senpick 로고" class="logo" onclick="location.href=`{% url 'login' %}`">
-        <div class="step-indicator">
-          <span class="dot active"></span>
-          <span class="dot active"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
-        <div class="signup-form-wrapper">
-        <!-- 2) 스텝 인디케이터 -->
-          <div class="signup-form">
-            <!-- 3) 타이틀 -->
-            <h2 class="signup-title">이메일 인증</h2>
-            <!-- 4) 설명문구 -->
+        <div class="login-wrapper"> <!-- signup-form-wrapper -->
+          <div class="form-block">  <!-- signup-form -->
             <p class="verify-description">
               이메일로 받은 인증번호 <strong>5자리</strong>를 입력해주세요.
             </p>
 
-            <!-- 5) 인증번호 입력 박스 5칸 -->
             <div class="verification-input-group">
               <input type="text" maxlength="1" class="verify-input" id="code1" autofocus>
               <input type="text" maxlength="1" class="verify-input" id="code2">
@@ -44,32 +39,24 @@
               <input type="text" maxlength="1" class="verify-input" id="code5">
             </div>
 
-            <!-- 6) 에러 메시지 (기본 숨김; JS에서 .error 시 display:block 처리) -->
             <p class="error-message"></p>
 
-            <!-- 7) (선택) 인증코드 재전송 영역 -->
             <div class="resend-container">
-              <!-- 1) 타이머 (05:00부터 감소) -->
               <span class="timer-text">05:00</span>
-              <!-- 2) 재전송 버튼 (00:00 이후 활성화) -->
               <span class="resend-code">인증코드 재전송</span>
             </div>
 
-            <!-- 8) 이메일 인증 완료 버튼 
-                - disabled 속성 제거 → 항상 클릭 가능
-                - 클래스명을 verify-button에서 verify-btn으로 변경
-                - id="verifyBtn" 부여 → JS에서 참조 -->
             <button type="button" id="verifyBtn" class="verify-btn">
               이메일 인증 완료
             </button>
           </div>
         </div>
-      </div> <!-- /.signup-form-area -->
-    </div> <!-- /.signup-container -->
-    <!-- 오른쪽 슬라이드 영역 -->
+      </div> 
+    </div> 
+
     {% include "slide.html" %}
   </div>
-  <!-- signup.js를 마지막에 불러옵니다 -->
   <script src="{% static 'js/signup.js' %}" defer></script>
+  <script src="{% static 'js/slide.js' %}" defer></script>
 </body>
 </html>
