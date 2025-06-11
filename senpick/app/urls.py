@@ -53,7 +53,6 @@ urlpatterns = [
     path('mypage/profile/delete/', mypage_views.profile_delete, name='profile_delete'),
     path('mypage/profile/delete/confirm/', mypage_views.profile_delete_confirm, name='profile_delete_confirm'),
     path("api/profile/delete/", mypage_views.delete_user_account, name="delete_user_account"),
-    path('mypage/profile/delete/confirm', mypage_views.profile_delete_confirm, name='profile_delete_confirm'),
     
     path('signup/step1/', views.signup_step1, name='signup_step1'),
     path('signup/step2/', views.signup_step2, name='signup_step2'),

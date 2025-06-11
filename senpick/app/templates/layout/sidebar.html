@@ -45,7 +45,7 @@
     <div class="divider-line"></div>
     <div class="brand-bar">
       <a href="{% url 'mypage' %}" style="display: flex; align-items: center; text-decoration: none;">
-        {% if request.session.type == "guest" %}
+        {% if request.session.type|default:'guest' == "guest" %}
         <img src="{% static 'images/bottom_logo_white.svg' %}" alt="Brand" class="brand-logo">
         {% else %}
           {% if request.session.profile_image %}
@@ -54,7 +54,7 @@
             <img src="{% static 'images/bottom_logo.svg' %}" alt="프로필" class="profile-img">
           {% endif %}
         {% endif %}
-        <span class="brand-label">{{request.session.nickname}}</span>
+        <span class="brand-label">{{ request.session.nickname|default:"비회원" }}</span>
       </a>
       <a href="{% url 'logout' %}" class="brand-link tooltip">
         <span class="tooltip-text">로그아웃</span>

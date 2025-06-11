@@ -83,21 +83,6 @@
               </div>
             </div>
           </div>
-
-
-          <!-- STEP 3 -->
-          <div id="step3" class="step">
-            <div class="modal-card">
-              <h2>그동안 <span class="font-cafe24">Senpick</span>과 함께해주셔서 감사합니다 :)</h2>
-              <p>언제든 다시 찾아주세요.</p>
-              <div class="img-wrapper">
-                <img src="{% static 'images/delete_confirm.png' %}" alt="탈퇴 완료">
-              </div>            
-              <div class="modal-buttons">
-                <button class="think-again-btn" onclick="window.location.href='/login/'">센픽 홈으로 가기</button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -210,7 +195,7 @@
           });
         
           if (response.ok) {
-            goToStep(3);
+            window.location.href = "/mypage/profile/delete/confirm/";
           } else {
             const data = await response.json();
             alert(data.message || "탈퇴 실패");

@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/mypage.css' %}">
+  <link rel="stylesheet" href="{% static 'css/profile_info.css' %}">
+  <link rel="stylesheet" href="{% static 'css/profile_delete.css' %}">
+  <link rel="stylesheet" href="{% static 'css/sidebar_profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/stepper.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Spoqa+Han+Sans+Neo:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cafe24+Supermagic&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div style="display: flex;" class="layout">
+    {% include "layout/sidebar.html" %}
+
+    <div class="layout">
+      <div class="sidebar-wrapper">
+        {% include "profile/sidebar_profile.html" with active_tab="delete" %}
+      </div>
+
+      <div class="profile-main-wrapper">
+        <div class="profile-main">
+          <div id="step3" class="step active">
+            <div class="modal-card">
+              <h2>그동안 <span class="font-cafe24">Senpick</span>과 함께해주셔서 감사합니다 :)</h2>
+              <p>언제든 다시 찾아주세요.</p>
+              <div class="img-wrapper">
+                <img src="{% static 'images/delete_confirm.png' %}" alt="탈퇴 완료">
+              </div>            
+              <div class="modal-buttons">
+                <button class="think-again-btn" onclick="window.location.href='/logout/'">센픽 홈으로 가기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
